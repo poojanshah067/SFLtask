@@ -43,15 +43,14 @@ public class BookService {
     }
 
     //issue book by member
-
-//    public BookDTO issueBook(BookDTO bookDTO, Long libraryMemberId)
-//    {
-//        LibraryMember libraryMember = this.libraryMemberRepository.findById(libraryMemberId).orElseThrow(() -> new ResourceNotFoundException("Member", "Id", libraryMemberId));
-//        Book book = this.modelMapper.map(bookDTO, Book.class);
-//        book.setLibraryMember(libraryMember);
-//        Book savedBook = this.bookRepository.save(book);
-//        return this.modelMapper.map(savedBook, BookDTO.class);
-//    }
+    public BookDTO issueBookByLibraryMember(Long bookId, Long libraryMemberId)
+    {
+        LibraryMember libraryMember = this.libraryMemberRepository.findById(libraryMemberId).orElseThrow(() -> new ResourceNotFoundException("Member", "Id", libraryMemberId));
+        Book book = this.bookRepository.findById(bookId).orElseThrow(()-> new ResourceNotFoundException("Book","id",bookId));
+        book.setLibraryMember(libraryMember);
+        Book savedBook = this.bookRepository.save(book);
+        return this.modelMapper.map(savedBook, BookDTO.class);
+    }
 
     //update Book
     public BookDTO updateBook(BookDTO bookDTO, Long bookId)
@@ -63,7 +62,6 @@ public class BookService {
 
         Book updatedBook = this.bookRepository.save(book);
         return this.modelMapper.map(updatedBook,BookDTO.class);
-
     }
 
     //get Book
@@ -109,6 +107,11 @@ public class BookService {
         Set<Book> books = this.bookRepository.filterByAuthorAndSortByBookName(authorId);
         Set<BookDTO> bookDTOSet = books.stream().map(book1 -> this.modelMapper.map(book1, BookDTO.class)).collect(Collectors.toSet());
         return bookDTOSet;
+    }
+
+    public Long countBookByLibraryMemberId(Long libraryMemberId)
+    {
+        return this.bookRepository.countBookByLibraryMemberId(libraryMemberId);
     }
 
 }

@@ -21,5 +21,10 @@ public interface BookRepository extends JpaRepository<Book, Long> {
         @Query(value = "SELECT b from Book as b LEFT JOIN Author as a on b.author.authorId = a.authorId where a.authorId = ?1 order by b.bookName")
         Set<Book> filterByAuthorAndSortByBookName(Long authorId);
 
+        @Query(value = "SELECT count(b.bookId) from Book as b LEFT JOIN LibraryMember as l on b.libraryMember.libraryMemberId = l.libraryMemberId where l.libraryMemberId =?1")
+        Long countBookByLibraryMemberId(Long libraryMemberId);
+
+
+
 
 }

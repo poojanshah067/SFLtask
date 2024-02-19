@@ -57,6 +57,19 @@ public class BookController {
 
     }
 
+    @GetMapping("/libraryMember/{libraryMemberId}")
+    public Long countBookByLibraryMemberId(@PathVariable Long libraryMemberId)
+    {
+        return this.bookService.countBookByLibraryMemberId(libraryMemberId);
+    }
+
+    @PutMapping("/books/{bookId}/libraryMember/{libraryMemberId}")
+    public ResponseEntity<BookDTO> issueBookByLibraryMember (@PathVariable Long bookId, @PathVariable Long libraryMemberId)
+    {
+        BookDTO bookDTO = this.bookService.issueBookByLibraryMember(bookId, libraryMemberId);
+        return new ResponseEntity<>(bookDTO, HttpStatus.OK);
+    }
+
 
     @PutMapping("/books/{bookId}")
     public ResponseEntity<BookDTO> updateBook(@Valid @RequestBody BookDTO bookDTO, @PathVariable Long bookId)

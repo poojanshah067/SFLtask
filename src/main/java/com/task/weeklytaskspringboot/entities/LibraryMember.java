@@ -23,7 +23,7 @@ public class LibraryMember {
     @Column(name = "name")
     private String libraryMemberName;
 
-    @OneToMany
+    @OneToMany(mappedBy = "libraryMember")
     private Set<Book> memberBooks = new HashSet<>();
 
 }
