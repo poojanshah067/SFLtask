@@ -10,8 +10,6 @@ import java.util.Set;
 
 @Entity
 @Table(name = "authors")
-@Getter
-@Setter
 @NoArgsConstructor
 public class Author {
 
@@ -26,4 +24,27 @@ public class Author {
     @OneToMany(mappedBy = "author",cascade = CascadeType.ALL)
     private Set<Book> books = new HashSet<>();
 
+    public Long getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(Long authorId) {
+        this.authorId = authorId;
+    }
+
+    public String getAuthorName() {
+        return authorName;
+    }
+
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
+    }
+
+    public Set<Book> getBooks() {
+        return books;
+    }
+
+    public void setBooks(Set<Book> books) {
+        this.books = books;
+    }
 }

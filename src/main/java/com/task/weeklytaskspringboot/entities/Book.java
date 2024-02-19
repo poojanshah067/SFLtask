@@ -9,8 +9,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "books")
-@Getter
-@Setter
 @NoArgsConstructor
 public class Book {
 
@@ -33,4 +31,43 @@ public class Book {
     @JoinColumn(name = "library_member_id")
     private LibraryMember libraryMember;
 
+    public Long getBookId() {
+        return bookId;
+    }
+
+    public void setBookId(Long bookId) {
+        this.bookId = bookId;
+    }
+
+    public String getBookName() {
+        return bookName;
+    }
+
+    public void setBookName(String bookName) {
+        this.bookName = bookName;
+    }
+
+    public String getBookDescription() {
+        return bookDescription;
+    }
+
+    public void setBookDescription(String bookDescription) {
+        this.bookDescription = bookDescription;
+    }
+
+    public Author getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(Author author) {
+        this.author = author;
+    }
+
+    public LibraryMember getLibraryMember() {
+        return libraryMember;
+    }
+
+    public void setLibraryMember(LibraryMember libraryMember) {
+        this.libraryMember = libraryMember;
+    }
 }

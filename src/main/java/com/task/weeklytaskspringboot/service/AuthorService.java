@@ -3,6 +3,7 @@ package com.task.weeklytaskspringboot.service;
 import com.task.weeklytaskspringboot.entities.Author;
 import com.task.weeklytaskspringboot.entities.Book;
 import com.task.weeklytaskspringboot.exceptions.ResourceNotFoundException;
+import com.task.weeklytaskspringboot.mappings.AuthorMapper;
 import com.task.weeklytaskspringboot.payloads.AuthorDTO;
 import com.task.weeklytaskspringboot.repositories.AuthorRepository;
 import org.modelmapper.ModelMapper;
@@ -21,12 +22,15 @@ public class AuthorService {
     @Autowired
     ModelMapper modelMapper;
 
+    @Autowired
+    private AuthorMapper authorMapper;
+
     //create author
     public AuthorDTO createAuthor(AuthorDTO authorDTO)
     {
-        Author author = this.modelMapper.map(authorDTO, Author.class);
+        Author author = authorMapper.toEntity(authorDTO);
         Author savedAuthor = this.authorRepository.save(author);
-        return this.modelMapper.map(savedAuthor, AuthorDTO.class);
+        return authorMapper.toDTO(savedAuthor);
     }
 
     //update Author
@@ -37,7 +41,7 @@ public class AuthorService {
         author.setAuthorName(authorDTO.getAuthorName());
 
         Author updatedAuthor = this.authorRepository.save(author);
-        return this.modelMapper.map(updatedAuthor,AuthorDTO.class);
+        return authorMapper.toDTO(updatedAuthor);
 
     }
 
@@ -46,7 +50,7 @@ public class AuthorService {
     {
         List<Author> allAuthors = this.authorRepository.findAll();
         List<AuthorDTO> authorDTOList = allAuthors.stream()
-                                                    .map((author) -> this.modelMapper.map(author, AuthorDTO.class))
+                                                    .map((author) -> authorMapper.toDTO(author))
                                                     .collect(Collectors.toList());
 
         return authorDTOList;
@@ -56,7 +60,7 @@ public class AuthorService {
     public AuthorDTO getAuthorById(Long authorId)
     {
         Author author = this.authorRepository.findById(authorId).orElseThrow(() -> new ResourceNotFoundException("Author", "id", authorId));
-        return this.modelMapper.map(author,AuthorDTO.class);
+        return authorMapper.toDTO(author);
     }
 
     //delete author by Id
