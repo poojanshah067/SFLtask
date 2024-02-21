@@ -4,6 +4,7 @@ import com.task.weeklytaskspringboot.entities.Author;
 import com.task.weeklytaskspringboot.entities.Book;
 import com.task.weeklytaskspringboot.entities.LibraryMember;
 import com.task.weeklytaskspringboot.exceptions.ResourceNotFoundException;
+import com.task.weeklytaskspringboot.mappings.BookMapper;
 import com.task.weeklytaskspringboot.payloads.BookDTO;
 import com.task.weeklytaskspringboot.repositories.AuthorRepository;
 import com.task.weeklytaskspringboot.repositories.BookRepository;
@@ -29,6 +30,9 @@ public class BookService {
     LibraryMemberRepository libraryMemberRepository;
 
     @Autowired
+    BookMapper bookMapper;
+
+    @Autowired
     ModelMapper modelMapper;
 
     //create Book
@@ -36,10 +40,10 @@ public class BookService {
     {
         Author author = this.authorRepository.findById(authorId).orElseThrow(() -> new ResourceNotFoundException("Author", "Id", authorId));
 
-        Book book = this.modelMapper.map(bookDTO, Book.class);
+        Book book = bookMapper.toEntity(bookDTO);
         book.setAuthor(author);
         Book savedBook = this.bookRepository.save(book);
-        return this.modelMapper.map(savedBook, BookDTO.class);
+        return bookMapper.toDTO(savedBook);
     }
 
     //issue book by member
@@ -49,7 +53,7 @@ public class BookService {
         Book book = this.bookRepository.findById(bookId).orElseThrow(()-> new ResourceNotFoundException("Book","id",bookId));
         book.setLibraryMember(libraryMember);
         Book savedBook = this.bookRepository.save(book);
-        return this.modelMapper.map(savedBook, BookDTO.class);
+        return bookMapper.toDTO(savedBook);
     }
 
     //update Book
@@ -61,7 +65,7 @@ public class BookService {
         book.setBookDescription(bookDTO.getBookDescription());
 
         Book updatedBook = this.bookRepository.save(book);
-        return this.modelMapper.map(updatedBook,BookDTO.class);
+        return bookMapper.toDTO(updatedBook);
     }
 
     //get Book
@@ -69,7 +73,7 @@ public class BookService {
     {
         List<Book> allBooks = this.bookRepository.findAll();
         List<BookDTO> bookDTOList = allBooks.stream()
-                .map((book) -> this.modelMapper.map(book, BookDTO.class))
+                .map((book) -> bookMapper.toDTO(book))
                 .collect(Collectors.toList());
 
         return bookDTOList;
@@ -79,7 +83,7 @@ public class BookService {
     public BookDTO getBookById(Long bookId)
     {
         Book book = this.bookRepository.findById(bookId).orElseThrow(() -> new ResourceNotFoundException("Book", "id", bookId));
-        return this.modelMapper.map(book,BookDTO.class);
+        return bookMapper.toDTO(book);
     }
 
     //delete book by Id
@@ -95,7 +99,7 @@ public class BookService {
         Author author = this.authorRepository.findById(authorId).orElseThrow(() -> new ResourceNotFoundException("Author", "Id", authorId));
         Set<Book> byAuthor = this.bookRepository.findByAuthor(author);
 
-        Set<BookDTO> bookDTOSet = byAuthor.stream().map(book -> this.modelMapper.map(book, BookDTO.class)).collect(Collectors.toSet());
+        Set<BookDTO> bookDTOSet = byAuthor.stream().map(book -> bookMapper.toDTO(book)).collect(Collectors.toSet());
 
         return bookDTOSet;
     }
@@ -105,7 +109,7 @@ public class BookService {
     {
 //        Book book = this.bookRepository.findById(authorId).orElseThrow(() -> new ResourceNotFoundException("Author", "Id", authorId));
         Set<Book> books = this.bookRepository.filterByAuthorAndSortByBookName(authorId);
-        Set<BookDTO> bookDTOSet = books.stream().map(book1 -> this.modelMapper.map(book1, BookDTO.class)).collect(Collectors.toSet());
+        Set<BookDTO> bookDTOSet = books.stream().map(book1 -> bookMapper.toDTO(book1)).collect(Collectors.toSet());
         return bookDTOSet;
     }
 

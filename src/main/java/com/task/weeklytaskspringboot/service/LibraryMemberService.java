@@ -3,6 +3,7 @@ package com.task.weeklytaskspringboot.service;
 import com.task.weeklytaskspringboot.entities.Book;
 import com.task.weeklytaskspringboot.entities.LibraryMember;
 import com.task.weeklytaskspringboot.exceptions.ResourceNotFoundException;
+import com.task.weeklytaskspringboot.mappings.LibraryMemberMapper;
 import com.task.weeklytaskspringboot.payloads.BookDTO;
 import com.task.weeklytaskspringboot.payloads.LibraryMemberDTO;
 import com.task.weeklytaskspringboot.repositories.BookRepository;
@@ -20,14 +21,17 @@ public class LibraryMemberService {
     LibraryMemberRepository libraryMemberRepository;
 
     @Autowired
+    LibraryMemberMapper libraryMemberMapper;
+
+    @Autowired
     ModelMapper modelMapper;
 
     //create Librarymember
     public LibraryMemberDTO createLibraryMember(LibraryMemberDTO libraryMemberDTO)
     {
-        LibraryMember libraryMember = this.modelMapper.map(libraryMemberDTO, LibraryMember.class);
+        LibraryMember libraryMember = libraryMemberMapper.toEntity(libraryMemberDTO);
         LibraryMember savedLibraryMember = this.libraryMemberRepository.save(libraryMember);
-        return this.modelMapper.map(savedLibraryMember, LibraryMemberDTO.class);
+        return libraryMemberMapper.toDTO(savedLibraryMember);
     }
 
     //update LibraryMember
@@ -38,7 +42,7 @@ public class LibraryMemberService {
         libraryMember.setLibraryMemberName(libraryMemberDTO.getLibraryMemberName());
 
         LibraryMember updatedLibraryMember = this.libraryMemberRepository.save(libraryMember);
-        return this.modelMapper.map(updatedLibraryMember,LibraryMemberDTO.class);
+        return libraryMemberMapper.toDTO(updatedLibraryMember);
 
     }
 
@@ -47,7 +51,7 @@ public class LibraryMemberService {
     {
         List<LibraryMember> allLibraryMembers = this.libraryMemberRepository.findAll();
         List<LibraryMemberDTO> libraryMemberDTOList = allLibraryMembers.stream()
-                .map((libraryMember) -> this.modelMapper.map(libraryMember, LibraryMemberDTO.class))
+                .map((libraryMember) -> libraryMemberMapper.toDTO(libraryMember))
                 .collect(Collectors.toList());
 
         return libraryMemberDTOList;
@@ -57,7 +61,7 @@ public class LibraryMemberService {
     public LibraryMemberDTO getLibraryMemberById(Long libraryMemberId)
     {
         LibraryMember libraryMember = this.libraryMemberRepository.findById(libraryMemberId).orElseThrow(() -> new ResourceNotFoundException("LibraryMember", "id", libraryMemberId));
-        return this.modelMapper.map(libraryMember,LibraryMemberDTO.class);
+        return libraryMemberMapper.toDTO(libraryMember);
     }
 
     // delete libraryMember by Id
