@@ -21,22 +21,23 @@ public class LibraryMemberService {
     LibraryMemberRepository libraryMemberRepository;
 
     @Autowired
+    BookRepository bookRepository;
+
+    @Autowired
     LibraryMemberMapper libraryMemberMapper;
 
     @Autowired
     ModelMapper modelMapper;
 
     //create Librarymember
-    public LibraryMemberDTO createLibraryMember(LibraryMemberDTO libraryMemberDTO)
-    {
+    public LibraryMemberDTO createLibraryMember(LibraryMemberDTO libraryMemberDTO) {
         LibraryMember libraryMember = libraryMemberMapper.toEntity(libraryMemberDTO);
         LibraryMember savedLibraryMember = this.libraryMemberRepository.save(libraryMember);
         return libraryMemberMapper.toDTO(savedLibraryMember);
     }
 
     //update LibraryMember
-    public LibraryMemberDTO updateLibraryMember(LibraryMemberDTO libraryMemberDTO, Long libraryMemberId)
-    {
+    public LibraryMemberDTO updateLibraryMember(LibraryMemberDTO libraryMemberDTO, Long libraryMemberId) {
         LibraryMember libraryMember = this.libraryMemberRepository.findById(libraryMemberId).orElseThrow(() -> new ResourceNotFoundException("LibraryMember", "id", libraryMemberId));
 
         libraryMember.setLibraryMemberName(libraryMemberDTO.getLibraryMemberName());
@@ -47,8 +48,7 @@ public class LibraryMemberService {
     }
 
     //get LibraryMember
-    public List<LibraryMemberDTO> getAllLibraryMembers()
-    {
+    public List<LibraryMemberDTO> getAllLibraryMembers() {
         List<LibraryMember> allLibraryMembers = this.libraryMemberRepository.findAll();
         List<LibraryMemberDTO> libraryMemberDTOList = allLibraryMembers.stream()
                 .map((libraryMember) -> libraryMemberMapper.toDTO(libraryMember))
@@ -58,16 +58,21 @@ public class LibraryMemberService {
     }
 
     //get Librarymember By Id
-    public LibraryMemberDTO getLibraryMemberById(Long libraryMemberId)
-    {
+    public LibraryMemberDTO getLibraryMemberById(Long libraryMemberId) {
         LibraryMember libraryMember = this.libraryMemberRepository.findById(libraryMemberId).orElseThrow(() -> new ResourceNotFoundException("LibraryMember", "id", libraryMemberId));
         return libraryMemberMapper.toDTO(libraryMember);
     }
 
     // delete libraryMember by Id
-    public void deleteLibraryMemberById(Long libraryMemberId)
-    {
+    public void deleteLibraryMemberById(Long libraryMemberId) {
         LibraryMember libraryMember = this.libraryMemberRepository.findById(libraryMemberId).orElseThrow(() -> new ResourceNotFoundException("LibraryMember", "id", libraryMemberId));
-        this.libraryMemberRepository.delete(libraryMember);
+        if (libraryMember != null) {
+
+            for (Book book : libraryMember.getMemberBooks()) {
+                book.setLibraryMember(null);
+                bookRepository.save(book);
+            }
+            this.libraryMemberRepository.delete(libraryMember);
+        }
     }
 }

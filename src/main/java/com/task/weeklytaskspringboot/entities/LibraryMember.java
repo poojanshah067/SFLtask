@@ -21,7 +21,7 @@ public class LibraryMember {
     @Column(name = "name")
     private String libraryMemberName;
 
-    @OneToMany(mappedBy = "libraryMember", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "libraryMember")
     private Set<Book> memberBooks = new HashSet<>();
 
     public Long getLibraryMemberId() {
